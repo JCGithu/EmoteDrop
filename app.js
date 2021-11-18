@@ -1,9 +1,11 @@
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-console.log(urlParams);
+const urlParams = new URLSearchParams(window.location.search);
+const myParam = urlParams.get('u');
+
+let channelList = ['colloquialowl']
+if (myParam) channelList = [myParam]
 
 const client = new tmi.Client({
-	channels: [ 'colloquialowl' ]
+	channels: channelList
 });
 
 function getRandomInt(max) {
