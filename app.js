@@ -1,8 +1,8 @@
 const urlParams = new URLSearchParams(window.location.search);
 const u = urlParams.get('u');
-const b = urlParams.get('b');
-const s = urlParams.get('s');
-const e = urlParams.get('e');
+const b = urlParams.get('bounce');
+const s = urlParams.get('emoteSize');
+const e = urlParams.get('ballSize');
 
 let channelList = ['colloquialowl']
 let bounce = 0.5
