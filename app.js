@@ -1,8 +1,13 @@
 const urlParams = new URLSearchParams(window.location.search);
-const myParam = urlParams.get('u');
+const u = urlParams.get('u');
+const b = urlParams.get('b');
+const s = urlParams.get('s');
+const e = urlParams.get('e');
 
 let channelList = ['colloquialowl']
-if (myParam) channelList = [myParam]
+let bounce = 0.5
+if (u) channelList = [u]
+if (b) bounce = b * 0.1;
 
 const client = new tmi.Client({
 	channels: channelList
@@ -29,8 +34,8 @@ var render = Render.create({
 element: document.body,
 engine: engine,
 options: {
-    width: 1920,
-    height: 1080,
+    width: innerWidth,
+    height: innerHeight,
     wireframes: false,
     background: 'transparent',
     wireframeBackground: 'transparent',
@@ -41,12 +46,29 @@ Render.run(render);
 var runner = Runner.create();
 Runner.run(runner, engine);
 
+let halfHeight = innerHeight * 0.5;
+let halfWidth = innerWidth * 0.5;
 
 Composite.add(world, [
-    Bodies.rectangle(960, 1080, 1920, 1, { isStatic: true }),
-    Bodies.rectangle(0, 540, 1, 1080, { isStatic: true }),
-    Bodies.rectangle(1920, 540, 1, 1080, { isStatic: true }),
+    Bodies.rectangle(halfWidth, innerHeight, innerWidth, 1, { isStatic: true }),
+    Bodies.rectangle(0, halfHeight, 1, innerHeight, { isStatic: true }),
+    Bodies.rectangle(innerWidth, halfHeight, 1, innerHeight, { isStatic: true }),
 ]);
+
+let scale = '2.0'
+let ball = 20;
+
+if (innerWidth > 1920) {
+    scale = '3.0';
+    ball = 30;
+}
+if (innerWidth < 720) {
+    scale = '1.0';
+    ball = 10;
+}
+if (s) scale = `${s}.0`;
+if (e) ball = parseInt(e);
+
 
 client.connect();
 
@@ -55,10 +77,11 @@ client.on('message', (channel, tags, message, self) => {
     for (let i in tags.emotes){
         for(let k in tags.emotes[i]){
             Composite.add(world,[ 
-                Bodies.circle(getRandomInt(1800), 0, 20, {
+                Bodies.circle(getRandomInt(innerWidth * 0.9), 0, ball, {
+                    restitution: bounce,
                     render: {
                         sprite: {
-                            texture: `http://static-cdn.jtvnw.net/emoticons/v2/${i}/default/light/2.0`
+                            texture: `http://static-cdn.jtvnw.net/emoticons/v2/${i}/default/light/${scale}`
                         }
                     }
                 }),
